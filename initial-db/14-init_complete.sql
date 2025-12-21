@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS init_complete AS SELECT 1;
