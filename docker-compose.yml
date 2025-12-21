@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16.11-alpine
+    container_name: postgres-container
+    environment:
+      - POSTGRES_DB=assignment
+      - POSTGRES_USER=assignment
+      - POSTGRES_PASSWORD=assignment
+      - TZ=Asia/Bangkok
+    ports:
+      - "9001:5432"
+    volumes:
+      - ./initial-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U assignment && psql -U assignment -d assignment -c 'SELECT 1 FROM init_complete' || exit 1"] # ตรวจสอบว่า DB พร้อมใช้งานและ initial data เสร็จแล้ว
+      retries: 60
+
+  app:
+    build: ./assignment
+    container_name: backend-api-container
+    ports:
+      - "9000:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/assignment
+      - SPRING_DATASOURCE_USERNAME=assignment
+      - SPRING_DATASOURCE_PASSWORD=assignment
+      - TZ=Asia/Bangkok
+    volumes:
+      - ./assignment/src:/app/src
+    depends_on:
+      db:
+        condition: service_healthy # รอให้ DB พร้อมใช้งานก่อน
+
+  frontend:
+    build: ./assignment-web
+    container_name: web-container
+    ports:
+      - "80:80"
+    environment:
+      - TZ=Asia/Bangkok
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
