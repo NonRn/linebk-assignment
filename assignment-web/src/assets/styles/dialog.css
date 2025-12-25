@@ -1,0 +1,121 @@
+
+:root {
+    --dialog-backdrop: rgba(6, 10, 34, 0.75);
+    --dialog-panel: #111428;
+    --dialog-panel-secondary: #181e3a;
+    --dialog-text: #f5f7ff;
+    --dialog-accent: #65d2ff;
+    --dialog-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 999;
+}
+
+.dialog-panel {
+    width: min(420px, 92vw);
+    border-radius: 20px;
+    background: var(--dialog-panel);
+    color: var(--dialog-text);
+    padding: 32px 28px;
+    box-shadow: var(--dialog-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    animation: dialog-pop 250ms ease-out;
+}
+
+.dialog-title {
+    font-weight: 600;
+    margin: 0 0 12px;
+    letter-spacing: 0.02em;
+}
+
+.dialog-message {
+    margin: 0;
+    line-height: 1.6;
+    color: rgba(245, 247, 255, 0.9);
+}
+
+.dialog-actions {
+    margin-top: 28px;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.dialog-button {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 28px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    min-width: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-button:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.55);
+    outline-offset: 4px;
+}
+
+.dialog-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px rgba(87, 189, 255, 0.45);
+}
+
+.dialog-button--primary {
+    color: #050913;
+    background: linear-gradient(120deg, #0c7a4a, #169960 60%, #37b880);
+    box-shadow: 0 12px 30px rgba(55, 184, 128, 0.35);
+}
+
+.dialog-button--secondary {
+    color: var(--dialog-text);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 12px 30px rgba(15, 17, 35, 0.4);
+}
+
+.dialog-button--danger {
+    color: #fff;
+    background: linear-gradient(120deg, #ff4d4f, #ff6a88 70%, #ff85a1);
+    box-shadow: 0 12px 30px rgba(255, 77, 79, 0.35);
+}
+
+.dialog-button--ghost {
+    color: var(--dialog-accent);
+    background: transparent;
+    border: 1px solid rgba(101, 210, 255, 0.55);
+    box-shadow: none;
+}
+
+@keyframes dialog-pop {
+    from {
+        transform: translateY(24px) scale(0.96);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .dialog-panel {
+        padding: 28px 22px;
+    }
+
+    .dialog-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

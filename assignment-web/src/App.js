@@ -1,24 +1,28 @@
-import logo from './public/logo512.png';
-import './public/styles/App.css';
+import { Provider } from 'react-redux';
+import { legacy_createStore as createStore} from 'redux'
+import rootReducer from './reducers/index'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import StartPage from './pages/StartPage';
+import BankMain from './pages/BankMain';
+import Login from './pages/Login';
+import NotFoundPage from './components/NotFoundPage';
+
+const store = createStore(
+  rootReducer
+)
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<StartPage />}/>
+          <Route path="/bank" element={<BankMain />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Router>
+    </Provider>
   );
 }
 
