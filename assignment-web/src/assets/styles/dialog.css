@@ -73,7 +73,6 @@
 }
 
 .dialog-button--primary {
-    color: #050913;
     background: linear-gradient(120deg, #0c7a4a, #169960 60%, #37b880);
     box-shadow: 0 12px 30px rgba(55, 184, 128, 0.35);
 }

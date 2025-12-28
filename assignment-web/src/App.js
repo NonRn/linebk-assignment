@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import StartPage from './pages/StartPage';
 import BankMain from './pages/BankMain';
 import Login from './pages/Login';
+import QRScan from './pages/QRScan'; 
+import AddMoney from './pages/AddMoney';
 import NotFoundPage from './components/NotFoundPage';
 
 const store = createStore(
@@ -19,6 +21,8 @@ function App() {
           <Route path="/" element={<StartPage />}/>
           <Route path="/bank" element={<BankMain />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/qrscan" element={<QRScan />} />
+          <Route path="/addmoney" element={<AddMoney />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>

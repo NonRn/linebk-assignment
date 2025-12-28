@@ -31,6 +31,7 @@ public class DebitCardRepository {
             LEFT JOIN debit_card_status dcs ON dc.card_id = dcs.card_id
             LEFT JOIN debit_card_design dcds ON dc.card_id = dcds.card_id
             WHERE dc.user_id = :userId
+            ORDER BY dcs.status, dc.card_id
         """);
 
         params.addValue("userId", userId);

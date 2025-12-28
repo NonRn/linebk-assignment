@@ -85,6 +85,7 @@ public class TransactionRepository {
                    is_bank
             FROM transactions
             WHERE user_id = :userId
+            ORDER BY transaction_id
             LIMIT :limit OFFSET :offset
         """;
 
