@@ -1,12 +1,10 @@
-import { useNavigate } from 'react-router-dom';
-
+import HeaderAct from '../components/HeaderAct';
 import '../assets/styles/th-bank.css';
 
 const AddMoney = () => {
-    const navigate = useNavigate();
-
     return (
-        <div className="wrap" style={{ minHeight: '100vh' }}>
+        <div className="wrap">
+            <HeaderAct />
             <div style={{ textAlign: 'center', padding: '20px', marginTop: '10px' }}>
                 <h2>แสกน QR Code <br/> เพื่อโอนเงินเข้าบัญชี** </h2>
                 <img 
@@ -16,22 +14,6 @@ const AddMoney = () => {
                 />
 
                 <p style={{ marginTop: '20px' }}>**บัญชีส่วนตัวผู้ทำ Assignment : โปรดตรวจสอบข้อมูลก่อนโอนเงิน</p>
-                
-                <button 
-                    onClick={() => navigate(-1)} 
-                    style={{ 
-                        marginTop: '30px', 
-                        padding: '12px 40px', 
-                        fontSize: '16px',
-                        backgroundColor: '#24c875',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer'
-                    }}
-                >
-                    Back
-                </button>
             </div>
         </div>
     );

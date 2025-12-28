@@ -78,7 +78,7 @@ const Pin = (props) => {
     };
 
     return (
-        <div className="wrap" style={{ minHeight: '100vh' }}>
+        <div className="wrap">
         <main className="container container--pin-type">
             <div className="pin">
             <div className="pin__top">

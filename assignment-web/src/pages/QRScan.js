@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import '../assets/styles/th-bank.css';
 import Dialog from '../components/Dialog';
+import HeaderAct from '../components/HeaderAct';
 import alertUtils from '../utils/AlertUtils';
 
 const QRScan = () => {
@@ -29,7 +30,8 @@ const QRScan = () => {
     };
 
     return (
-        <div className="wrap" style={{ minHeight: '100vh' }}>
+        <div className="wrap">
+            <HeaderAct />
             <Dialog
                 isOpen={dialogData.isOpen}
                 title={dialogData.title}

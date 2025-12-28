@@ -8,9 +8,9 @@ import commonUtils from '../utils/CommonUtils';
 import alertUtils from '../utils/AlertUtils';
 
 import { getBannerByUserIdApi } from '../services/BannerService';
-import { getAccountByUserIdApi, withdrawApi } from '../services/AccountService';
 import { getDebitCardByUserIdApi } from '../services/DebitCardService';
 import { getTransactionByUserIdApi } from '../services/TransactionService';
+import { getAccountByUserIdApi, withdrawApi, changeNameColorApi } from '../services/AccountService';
 import Splash from '../components/Splash';
 
 const BankMain = (props) => {
@@ -20,6 +20,7 @@ const BankMain = (props) => {
 
     const [dialogData, setDialogData] = useState(alertUtils.close());
     const [withDrawDialog, setWithDrawDialog] = useState(alertUtils.close());
+    const [nameColorDialog, setNameColorDialog] = useState(alertUtils.close());
     const [mainBankAccount, setMainBankAccount] = useState(null);
     const [snackbar, setSnackbar] = useState({ show: false, message: '' });
     const [activeTooltip, setActiveTooltip] = useState(null);
@@ -222,7 +223,6 @@ const BankMain = (props) => {
             const response = await withdrawApi(withdrawalAccount.accountId, amount);
             
             if (response.status === 200) {
-                console.log('Withdrawal successful:', response);
                 setSnackbar({ show: true, message: 'ถอนเงินสำเร็จ' });
                 setTimeout(() => {
                     setSnackbar({ show: false, message: '' });
@@ -248,6 +248,145 @@ const BankMain = (props) => {
             );
         }
     }
+
+    const handleEditNameColor = (account) => {
+        if (!account) return;
+
+        setActiveTooltip(null);
+        setNameColorDialog({
+            isOpen: true,
+            title: 'แก้ไขชื่อและสี',
+            message: (
+            <div style={{ padding: '10px 0' }}>
+                <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>
+                    ชื่อบัญชี:
+                </label>
+                <input
+                    id='account-nickname'
+                    type="text"
+                    defaultValue={account.nickname || ''}
+                    placeholder="ชื่อบัญชี"
+                    style={{
+                    width: '100%',
+                    padding: '12px',
+                    fontSize: '16px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    boxSizing: 'border-box'
+                    }}
+                />
+                </div>
+                <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>
+                    สีของบัญชี:
+                </label>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                    {['#24C875', '#9366ed',  '#15bbc7 ', '#557bf2', '#f88355', '#dd45da', '#FFD200', '#35e2b4'].map(color => (
+                    <button
+                        key={color}
+                        type="button"
+                        onClick={() => document.getElementById('account-color').value = color}
+                        style={{
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: color,
+                        border: document.getElementById('account-color')?.value === color ? '3px solid #000' : '2px solid #ddd',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                        }}
+                        title={color}
+                    />
+                    ))}
+                </div>
+                <input
+                    id='account-color'
+                    type="text"
+                    defaultValue={account.color || '#24C875'}
+                    placeholder="#24C875"
+                    style={{
+                    width: '100%',
+                    padding: '12px',
+                    fontSize: '16px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    boxSizing: 'border-box'
+                    }}
+                />
+                </div>
+            </div>
+            ),
+            buttons: [
+            {
+                buttonLabel: 'ยกเลิก',
+                color: 'secondary',
+                onClick: () => {
+                    setNameColorDialog(alertUtils.close());
+                }
+            },
+            {
+                buttonLabel: 'บันทึก',
+                onClick: () => handleEditNameColorSubmit(account)
+            }
+            ]
+        });
+    };
+
+    const handleEditNameColorSubmit = async (account) => {
+        const nicknameInput = document.getElementById('account-nickname');
+        const colorInput = document.getElementById('account-color');
+        
+        const newNickname = nicknameInput ? nicknameInput.value.trim() : '';
+        const newColor = colorInput ? colorInput.value.trim() : '';
+
+        // Validate color code
+        const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+        if (newColor && !hexColorRegex.test(newColor)) {
+            setTimeout(() => {
+                setDialogData(
+                    alertUtils.alert({
+                        title: 'ข้อผิดพลาด',
+                        message: 'กรุณากรอกรหัสสีในรูปแบบ Hex Code (#RRGGBB หรือ #RGB)',
+                        onClose: () => {
+                            setDialogData(alertUtils.close());
+                            handleEditNameColor(account);
+                        }
+                    })
+                );
+            }, 100);
+            return;
+        }
+
+        try {
+            //Call API
+            const response = await changeNameColorApi(account.accountId, newNickname, newColor);
+            
+            setNameColorDialog(alertUtils.close());
+            if (response.status === 200) {
+                setSnackbar({ show: true, message: 'แก้ไขเรียบร้อย' });
+                setTimeout(() => {
+                    setSnackbar({ show: false, message: '' });
+                }, 5000);
+
+                // Refresh account data
+                if (user && user.userId) {
+                    fetchAccounts(user.userId);
+                }
+            } else {
+                throw new Error('Save failed');
+            }
+        } catch (error) {
+            setDialogData(
+                alertUtils.alert({
+                    title: 'เกิดข้อผิดพลาด',
+                    message: error.response?.data?.message || 'ไม่สามารถแก้ไขได้ กรุณาลองใหม่อีกครั้ง',
+                    onClose: () => {
+                        setDialogData(alertUtils.close());
+                    }
+                })
+            );
+        }
+    };
 
     return (
         <div className="wrap">
@@ -286,7 +425,7 @@ const BankMain = (props) => {
                         <span className="main-acc__ani_img3" />
                         </div>
                     </div>
-                    <div className="main-acc__link__box">
+                    <div className="main-acc__link__box" style={{background: mainBankAccount.color || ''}}>
                         <div className="main-acc__link__item">
                         <button className="main-acc__link main-acc__link--withdrawal" onClick={() => handleWithdrawal(mainBankAccount)}>
                             Withdrawal
@@ -304,13 +443,13 @@ const BankMain = (props) => {
                         <span className="blind">More Action</span>
                     </button>
                     <div className="tooltip" style={{ display: activeTooltip === 'main' ? 'block' : 'none' }}>
-                        <button id="set-main-account" type="button" className="tooltip__btn-more" onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>
+                        <button id="set-main-account" type="button" className="tooltip__btn-more" onClick={() => navigate('/set-main-account')} onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>
                             Set main account
                         </button>
                         <button id="copy-account-number" type="button" className="tooltip__btn-more" onClick={(e) => handleCopyAccountNumber(mainBankAccount?.accountNumber, e)} onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>
                             Copy account number
                         </button>
-                        <button id="edit-name-color" type="button" className="tooltip__btn-more" onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>
+                        <button id="edit-name-color" type="button" className="tooltip__btn-more" onClick={() => handleEditNameColor(mainBankAccount)} onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>
                             Edit Name and Color
                         </button>
                     </div>
@@ -344,7 +483,7 @@ const BankMain = (props) => {
                                 backgroundColor: card.color || '#00a1e2', 
                                 borderColor: card.borderColor || '',
                                 opacity: card.status === 'Active' ? 1 : 0.4,
-                                color: card.status === 'Active' ? '' : '#000000'
+                                color: card.status === 'Active' ? commonUtils.getContrastYIQ(card.color || '#00a1e2') : '#000000'
                             }}
                             onClick={(event) => event.preventDefault()}
                             >
@@ -364,7 +503,7 @@ const BankMain = (props) => {
             </div>
 
             {accounts && accounts.length > 0 && accounts.filter(account => !account.isMainAccount).map((account, idx) => (
-                <div id={account.accountId} className="main-acc is-small" style={{background: account.color || '', cursor: 'pointer'}} onClick={() => handleWithdrawal(account)}>
+                <div id={account.accountId} className="main-acc is-small" style={{background: account.color || '', color: commonUtils.getContrastYIQ(account.color || '#ffffff')}}>
                     <div className="main-acc__top">
                         <h2 className="main-acc__name">{account.nickname || 'Saving Account'}</h2>
                         <span className="main-acc__amount">{commonUtils.currencySign(account.currency)} {account.amount ? account.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}</span>
@@ -379,7 +518,7 @@ const BankMain = (props) => {
                     </button>
                     <div className="tooltip tooltip--sub-acc" style={{ display: activeTooltip === `acc-${idx}` ? 'block' : 'none' }}>
                         <button type="button" className="tooltip__btn-more" onClick={() => handleCopyAccountNumber(account?.accountNumber)} onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>Copy account number</button>
-                        <button type="button" className="tooltip__btn-more" onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>Edit Name and Color</button>
+                        <button type="button" className="tooltip__btn-more" onClick={() => handleEditNameColor(account)} onMouseEnter={(e) => e.target.style.backgroundColor = '#e0e0e0'} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>Edit Name and Color</button>
                     </div>
                     <a href="#" className="main-acc__act main-acc__act--money" onClick={(event) => event.preventDefault()}>
                         <span className="blind">Add money</span>
@@ -433,7 +572,7 @@ const BankMain = (props) => {
 
             {accounts && accounts.length > 0 &&
                 <div className="main-tb">
-                    <a href="#" className="link-to" onClick={(event) => event.preventDefault()}>
+                    <a href="#" className="link-to" onClick={(event) => { event.preventDefault(); navigate('/total-balance'); }}>
                     Total Balance
                     </a>
                 </div>
@@ -455,6 +594,14 @@ const BankMain = (props) => {
             confirmLabel={withDrawDialog.confirmLabel}
             buttons={withDrawDialog.buttons}
             onClose={() => setWithDrawDialog(alertUtils.close())}
+        />
+        <Dialog
+            isOpen={nameColorDialog.isOpen}
+            title={nameColorDialog.title}
+            message={nameColorDialog.message}
+            confirmLabel={nameColorDialog.confirmLabel}
+            buttons={nameColorDialog.buttons}
+            onClose={() => setNameColorDialog(alertUtils.close())}
         />
         
         {snackbar.show && (

@@ -63,7 +63,7 @@ const Dialog = ({
                         {title}
                     </h2>
                 ) : null}
-                <p className="dialog-message">{message}</p>
+                <div className="dialog-message">{message}</div>
                 <div className="dialog-actions">
                     {dialogButtons.map((button, index) => {
                         const { buttonLabel, color = 'primary' } = button;

@@ -710,7 +710,6 @@ button {
 }
 
 .pin__credentials-card {
-	width: 100%;
 	margin: 0 auto;
 	padding: 28px 24px 24px;
 	border-radius: 20px;
@@ -1551,6 +1550,7 @@ button {
 
 .wrap {
 	position: relative;
+	min-height: 100vh;
 }
 
 .splash {

@@ -11,3 +11,11 @@ export const getAccountByUserIdApi = (userId) => (
 export const withdrawApi = (accountId, amount) => (
     client.post(`${ACCOUNT_ENDPOINT}/withdraw`, { accountId, amount })
 );
+
+export const changeNameColorApi = (accountId, nickname, color) => (
+    client.post(`${ACCOUNT_ENDPOINT}/name-color`, { accountId, nickname, color })
+);
+
+export const setupMainAccountApi = (userId, accountId) => (
+    client.post(`${ACCOUNT_ENDPOINT}/main`, { userId, accountId })
+);

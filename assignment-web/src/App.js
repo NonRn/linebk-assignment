@@ -7,6 +7,8 @@ import BankMain from './pages/BankMain';
 import Login from './pages/Login';
 import QRScan from './pages/QRScan'; 
 import AddMoney from './pages/AddMoney';
+import TotalBalance from './pages/TotalBalance';
+import SetMainAccount from './pages/SetMainAccount';
 import NotFoundPage from './components/NotFoundPage';
 
 const store = createStore(
@@ -23,6 +25,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/qrscan" element={<QRScan />} />
           <Route path="/addmoney" element={<AddMoney />} />
+          <Route path="/total-balance" element={<TotalBalance />} />
+          <Route path="/set-main-account" element={<SetMainAccount />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>

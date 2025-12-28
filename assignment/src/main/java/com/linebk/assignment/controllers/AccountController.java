@@ -105,7 +105,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/setup-main-account")
+    @PostMapping("/main")
     @Operation(
         summary = "Setup main account for user",
         description = "Set the specified account as main account (is_main_account = true) and set other accounts as secondary (is_main_account = false)."
@@ -139,7 +139,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/update-detail")
+    @PostMapping("/name-color")
     @Operation(
         summary = "Update account detail (nickname and color)",
         description = "Update nickname and color for the specified account in account_details table."
