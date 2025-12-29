@@ -90,24 +90,25 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
 ├── assignment/                         # Spring Boot Application
 │   ├── src/main
 │   │   ├── java/com/linkbk/assignment
+│   │   │   ├── config                  # Application Configuration Classes
 │   │   │   ├── controllers             # REST Controllers (API Endpoints)
 │   │   │   ├── models                  # DTO & Entities
 │   │   │   ├── repositories            # Spring Data JPA Repositories
 │   │   │   ├── services                # Business Logic
 │   │   │   └── AssignmentApplication.java # Application Main Class
-│   │   └── resource
-│   │       ├── dbchangelog             # Liquibase migration
+│   │   └── resources
 │   │       └── application.properties  # Application Configuration
 │   ├── Dockerfile                      # Multi-stage Build Dockerfile
 │   └── pom.xml                         # Maven Configuration
 ├── assignment-web/                     # React Application
 │   ├── src/
+│   │   ├── assets                      # Static files (images, fonts, etc.)
 │   │   ├── components                  # UI Component
 │   │   ├── pages                       # Web Page (Container)
 │   │   ├── services                    # API calls logic
-│   │   ├── store                       # Redux Toolkit Store
-│   │   └── utils                       # Shared helper functions
-│   ├── public/                         # assets files (images, CSS)
+│   │   ├── reducers                    # Redux Store Reducers
+│   │   ├── utils                       # Shared helper functions
+│   │   └── App.js                      # Main Application Component
 │   ├── Dockerfile                      # Multi-stage Build with Nginx
 │   ├── package.json                    # Node.js/React Configuration
 │   └── nginx.conf                      # Nginx Configuration (Reverse Proxy)
@@ -117,3 +118,54 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
 ```
 
 ## 🔌 API Documentation
+- Swagger UI สามารถดูได้ที่: [API Docs](http://localhost:8080/swagger-ui/index.html) (หลังจากรัน Docker หรือ Backend แล้ว)
+
+1) Users
+- GET /api/v1/user?userid={userid}
+  - คำอธิบาย: ดึงข้อมูลโปรไฟล์ผู้ใช้
+  - Query params: userid (string, required)
+
+- POST /api/v1/user/auth/passcode
+  - คำอธิบาย: ตรวจสอบ passcode ของผู้ใช้
+  - Body (JSON): { "userid": "string", "passcode": "string" }
+
+- POST /api/v1/user/auth/login
+  - คำอธิบาย: ตรวจสอบ username / password (ปัจจุบันใช้ AuthRequest)
+  - Body (JSON): { "userid": "string", "passcode": "string" }
+
+2) Accounts
+- GET /api/v1/account?userid={userid}
+  - คำอธิบาย: ดึงบัญชีทั้งหมดของผู้ใช้
+  - Query params: userid (string, required)
+
+- POST /api/v1/account/withdraw
+  - คำอธิบาย: ถอนเงินจากบัญชี
+  - Body (JSON): { "accountId": "string", "amount": <number|string> }
+
+- POST /api/v1/account/main
+  - คำอธิบาย: ตั้งบัญชีที่ระบุเป็น main account สำหรับผู้ใช้
+  - Body (JSON): { "userId": "string", "accountId": "string" }
+
+- POST /api/v1/account/name-color
+  - คำอธิบาย: อัปเดต nickname และ color ของบัญชีใน account_details
+  - Body (JSON): { "accountId": "string", "nickname": "string", "color": "string" }
+
+3) Transactions
+- GET /api/v1/transaction?userid={userid}&limit={limit}&offset={offset}
+  - คำอธิบาย: ดึงรายการธุรกรรมของผู้ใช้แบบ pagination
+  - Query params:
+    - userid (string, required)
+    - limit (int, optional, default 10, max 1000)
+    - offset (int, optional, default 0)
+
+4) Debit Cards
+- GET /api/v1/debitcard?userid={userid}
+  - คำอธิบาย: ดึงบัตรเดบิตของผู้ใช้
+  - Query params: userid (string, required)
+
+5) Banners
+- GET /api/v1/banner?userid={userid}
+  - คำอธิบาย: ดึงรายการ banner สำหรับผู้ใช้
+  - Query params: userid (string, required)
+
+---
