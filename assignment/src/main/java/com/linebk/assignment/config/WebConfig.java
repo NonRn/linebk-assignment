@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000") // อนุญาต React
+                .allowedOrigins("http://localhost:3000", "http://localhost") // อนุญาต React และ localhost (docker)
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
 }

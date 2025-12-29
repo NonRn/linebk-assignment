@@ -18,6 +18,7 @@ CREATE TABLE "account_details" (
   "is_main_account" boolean DEFAULT NULL,
   "progress" int DEFAULT NULL,
   "dummy_col_5" varchar(255) DEFAULT NULL,
+  "nickname" varchar(100) DEFAULT NULL,
   PRIMARY KEY ("account_id")
 );
 
@@ -50,6 +51,7 @@ CREATE TABLE "banners" (
   "description" text,
   "image" varchar(255) DEFAULT NULL,
   "dummy_col_11" varchar(255) DEFAULT NULL,
+  "link_url" varchar(255) DEFAULT NULL,
   PRIMARY KEY ("banner_id")
 );
 
@@ -92,7 +94,7 @@ CREATE TABLE "transactions" (
   "user_id" varchar(50) DEFAULT NULL,
   "name" varchar(100) DEFAULT NULL,
   "image" varchar(255) DEFAULT NULL,
-  "isBank" boolean DEFAULT NULL,
+  "is_bank" boolean DEFAULT NULL,
   "dummy_col_6" varchar(255) DEFAULT NULL,
   PRIMARY KEY ("transaction_id")
 );
@@ -108,5 +110,6 @@ CREATE TABLE "users" (
   "user_id" varchar(50) NOT NULL,
   "name" varchar(100) DEFAULT NULL,
   "dummy_col_1" varchar(255) DEFAULT NULL,
+  "profile_image" varchar(255) DEFAULT NULL,
   PRIMARY KEY ("user_id")
 );

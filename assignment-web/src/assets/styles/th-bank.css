@@ -66,10 +66,6 @@ button:-moz-focusring {
 	font: inherit
 }
 
-#root {
-	height: 100%;
-}
-
 .blind {
 	margin: -1px !important;
 	padding: 0 !important;
@@ -239,8 +235,8 @@ button {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	margin: 0 0 0 50px;
-	margin: 0 env(safe-area-inset-right) 0 calc(50px + env(safe-area-inset-left));
 	margin: 0 constant(safe-area-inset-right) 0 calc(50px + constant(safe-area-inset-left));
+	margin: 0 env(safe-area-inset-right) 0 calc(50px + env(safe-area-inset-left));
 	font-size: 1.7rem;
 	line-height: 4.4rem;
 	font-weight: 600;
@@ -251,8 +247,8 @@ button {
 	position: absolute;
 	top: 7px;
 	left: 10px;
-	left: calc(10px + env(safe-area-inset-left));
 	left: calc(10px + constant(safe-area-inset-left));
+	left: calc(10px + env(safe-area-inset-left));
 	height: 30px
 }
 
@@ -260,8 +256,8 @@ button {
 	width: 30px;
 	height: 30px;
 	margin: 0 10px;
+	margin: 0 calc(10px + constant(safe-area-inset-right)) 0 10px;
 	margin: 0 calc(10px + env(safe-area-inset-right)) 0 10px;
-	margin: 0 calc(10px + constant(safe-area-inset-right)) 0 10px
 }
 
 .header__logo {
@@ -311,8 +307,8 @@ button {
 	flex-direction: column;
 	position: relative;
 	padding: 20px 28px 80px;
+	padding: 20px calc(28px + constant(safe-area-inset-right)) calc(80px + constant(safe-area-inset-bottom)) calc(28px + constant(safe-area-inset-left));
 	padding: 20px calc(28px + env(safe-area-inset-right)) calc(80px + env(safe-area-inset-bottom)) calc(28px + env(safe-area-inset-left));
-	padding: 20px calc(28px + constant(safe-area-inset-right)) calc(80px + constant(safe-area-inset-bottom)) calc(28px + constant(safe-area-inset-left))
 }
 
 .container--pin-type {
@@ -321,8 +317,8 @@ button {
 
 .container--main {
 	padding: 0 20px;
+	padding: 0 calc(20px + constant(safe-area-inset-right)) 0 calc(20px + constant(safe-area-inset-left));
 	padding: 0 calc(20px + env(safe-area-inset-right)) 0 calc(20px + env(safe-area-inset-left));
-	padding: 0 calc(20px + constant(safe-area-inset-right)) 0 calc(20px + constant(safe-area-inset-left))
 }
 
 .content_wrap {
@@ -541,8 +537,8 @@ button {
 	text-align: center;
 	background: #24c875;
 	padding: 0;
+	padding: 0 0 constant(safe-area-inset-bottom);
 	padding: 0 0 env(safe-area-inset-bottom);
-	padding: 0 0 constant(safe-area-inset-bottom)
 }
 
 .pin__top {
@@ -1227,8 +1223,8 @@ button {
 .main-tb {
 	margin-top: 24px;
 	margin-bottom: 50px;
-	margin-bottom: calc(50px + env(safe-area-inset-bottom));
 	margin-bottom: calc(50px + constant(safe-area-inset-bottom));
+	margin-bottom: calc(50px + env(safe-area-inset-bottom));
 	text-align: center
 }
 

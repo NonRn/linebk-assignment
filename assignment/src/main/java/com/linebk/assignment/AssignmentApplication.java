@@ -13,9 +13,4 @@ public class AssignmentApplication {
 		SpringApplication.run(AssignmentApplication.class, args);
 	}
 
-    @GetMapping("/hi")
-    public String sayHi()
-    {
-        return "Hi spring boot";
-    }
 }

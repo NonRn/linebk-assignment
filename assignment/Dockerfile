@@ -2,11 +2,8 @@
 FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Download dependencies first (for better caching)
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
 # Build the application
+COPY pom.xml .
 COPY src ./src
 RUN mvn package -DskipTests
 
@@ -17,5 +14,5 @@ WORKDIR /app
 # Copy the built artifact from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 9000
+EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]

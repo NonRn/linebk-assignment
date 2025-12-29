@@ -30,8 +30,7 @@
 3. รอ Docker ทำงาน และ เข้าใช้งานผ่าน Browser ที่: [http://localhost](http://localhost)
 
 **Remark**
-- หากไม่ต้องการ initial mock data ลง database ให้ลบ ไฟล์ SQL ที่ folder initial-db โดยเหลือไฟล์ลำดับแรก และ ลำดับสุดท้ายไว้ 
-( ไฟล์ลำดับสุดท้าย มีไว้เช็คการ initial data เพื่อให้ระบบเริ่มทำงานหลัง initial สมบูรณ์ หากลบไฟล์สุดท้ายจะต้องแก้ db healthcheck ที่ docker-compose )
+- หากต้องการ initial mock data ลง database อัตโนมัติ ให้วางไฟล์ SQL (Postgresql) ที่ folder initial-db [Mock Data](https://drive.google.com/drive/folders/1A_qSu3rIPKb7LVuZMg0QMf2_Tt4duxP3?usp=sharing)
 
 ---
 
@@ -49,13 +48,18 @@
 #### Step 1: Database Setup
 ```sql
 -- 1. สร้าง Database ใหม่
-CREATE DATABASE assignment;
+CREATE DATABASE assignment template=template0 encoding='unicode' lc_collate='th_TH.UTF8' lc_ctype='th_TH.UTF8';
 
 -- 2. สร้าง User ใหม่
 CREATE USER assignment WITH PASSWORD 'assignment';
 
 -- 3. มอบสิทธิ์ให้ User จัดการ Database นี้ได้
 GRANT ALL PRIVILEGES ON DATABASE assignment TO assignment;
+
+-- 4. เข้า database และให้ User จัดการ SCHEMA, TABLES, SEQUENCES ได้
+GRANT ALL ON SCHEMA public TO assignment;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO assignment;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
 ```
 
 #### Step 2: Backend Setup (Spring Boot)
