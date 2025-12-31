@@ -13,6 +13,8 @@
 - **Axios** (HTTP Client)
 - **Nginx** (Web Server & Reverse Proxy)
 
+---
+
 ## 🚀 Setup Instructions
 
 ### 1. Docker Setup 🐳
@@ -30,7 +32,6 @@
    ```
 3. รอ Docker ทำงาน และ เข้าใช้งานผ่าน Browser ที่: [http://localhost](http://localhost)
 
----
 
 ### 2. Local Development Setup 💻
 รันที่ Local ไม่ผ่าน Docker
@@ -82,10 +83,14 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
    ```
 4. ระบบจะเปิด Browser อัตโนมัติที่พอร์ต `3000`
 
+---
+
 ## 🧪 Testing & Demo Data
 - การเข้าสู่ระบบ ยังไม่มีการตรวจสอบ pin หรือ รหัสผ่านจริง สามารถใส่รหัสผ่านอะไรก็ได้
 - การเข้าหน้าใส่ pin สามารถเข้าโดยใส่ query param userid เช่น: `http://localhost/?userid=000018b0e1a211ef95a30242ac180002`
 - หากไม่ใส่ query param ระบบจะส่งไปยังหน้า login ให้ใส่ userid แทนการกรอก pin
+
+---
 
 ## 📂 Project Structure
 
@@ -101,6 +106,9 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
 │   │   │   └── AssignmentApplication.java # Application Main Class
 │   │   └── resources
 │   │       └── application.properties  # Application Configuration
+│   ├── src/test/java/com/linkbk/assignment
+│   │   └── controllers                 # Unit Tests for Controllers
+│   │   └── services                    # Unit Tests for Services
 │   ├── Dockerfile                      # Multi-stage Build Dockerfile
 │   └── pom.xml                         # Maven Configuration
 ├── assignment-web/                     # React Application
@@ -119,6 +127,8 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
 │   └── ...                             # SQL file for initial database
 └── docker-compose.yml                  # Orchestration for DB, App, and Web
 ```
+
+---
 
 ## 🔌 API Documentation
 - Swagger UI สามารถดูได้ที่: [API Docs](http://localhost:8080/swagger-ui/index.html) (หลังจากรัน Docker หรือ Backend แล้ว)
@@ -195,8 +205,8 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
 * **Max Latency:** 27.92s
 
 ### Observations 🔍
-**Stability:** The application handled up to 100 concurrent users without any errors.
-**Latency:** The P90 latency spiked to 8.18 seconds, exceeding the set threshold of 2 seconds.
-**Bottleneck:** The maximum latency is 27.92 seconds during the 100 VU, This indicates that the database is working heavily.
+* **Stability:** The application handled up to 100 concurrent users without any errors.
+* **Latency:** The P90 latency spiked to 8.18 seconds, exceeding the set threshold of 2 seconds.
+* **Bottleneck:** The maximum latency is 27.92 seconds during the 100 VU, This indicates that the database is working heavily.
 
 ![img.png](assignment/src/test/img.png)
