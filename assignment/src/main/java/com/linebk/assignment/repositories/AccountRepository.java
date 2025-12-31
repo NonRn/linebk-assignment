@@ -80,7 +80,7 @@ public class AccountRepository {
         }
     }
 
-    public void updateAccountBalance(String accountId, BigDecimal newAmount) {
+    public int updateAccountBalance(String accountId, BigDecimal newAmount) {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         String sql = """
@@ -92,11 +92,10 @@ public class AccountRepository {
         params.addValue("accountId", accountId);
         params.addValue("newAmount", newAmount);
 
-        namedParameterJdbcTemplate.update(sql, params);
-        log.info("Updated account balance for accountId={}, newAmount={}", accountId, newAmount);
+        return namedParameterJdbcTemplate.update(sql, params);
     }
 
-    public void setupMainAccount(String userId, String accountId) {
+    public int setupMainAccount(String userId, String accountId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         // Set is_main_account = true for the specified account
@@ -117,11 +116,10 @@ public class AccountRepository {
             WHERE user_id = :userId AND account_id != :accountId
         """;
 
-        namedParameterJdbcTemplate.update(sqlUnsetOthers, params);
-        log.info("Setup main account for userId={}, accountId={}", userId, accountId);
+        return namedParameterJdbcTemplate.update(sqlUnsetOthers, params);
     }
 
-    public void updateAccountDetail(String accountId, String nickname, String color) {
+    public int updateAccountDetail(String accountId, String nickname, String color) {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         String sql = """
@@ -134,8 +132,7 @@ public class AccountRepository {
         params.addValue("nickname", nickname);
         params.addValue("color", color);
 
-        namedParameterJdbcTemplate.update(sql, params);
-        log.info("Updated account detail for accountId={}, nickname={}, color={}", accountId, nickname, color);
+        return namedParameterJdbcTemplate.update(sql, params);
     }
 
     public boolean isAccountExists(String accountId) {

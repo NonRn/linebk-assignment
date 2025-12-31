@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +42,8 @@ public class DebitCardController {
                 schema = @Schema(implementation = DebitCardDto.class))
         ),
         @ApiResponse(responseCode = "204", description = "No debit cards found"),
-        @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+        @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<List<DebitCardDto>> getDebitCardByUserId(
         @Parameter(description = "Unique identifier of the user", example = "user-1234")
@@ -55,16 +55,21 @@ public class DebitCardController {
             return ResponseEntity.badRequest().build();
         }
 
-        log.info("Retrieving debit cards for userid={}", userId);
-        List<DebitCardDto> debitCards = debitCardService.getDebitCardByUserId(userId);
+        try {
+            log.info("Retrieving debit cards for userid={}", userId);
+            List<DebitCardDto> debitCards = debitCardService.getDebitCardByUserId(userId);
 
-        if (debitCards == null || debitCards.isEmpty()) {
-            log.debug("No debit cards found for userid={}", userId);
-            return ResponseEntity.noContent().build();
+            if (debitCards == null || debitCards.isEmpty()) {
+                log.debug("No debit cards found for userid={}", userId);
+                return ResponseEntity.noContent().build();
+            }
+
+            log.info("Successfully retrieved {} debit cards for userid={}", debitCards.size(), userId);
+            return ResponseEntity.ok(debitCards);
+        } catch (Exception e) {
+            log.error("Error retrieving debit cards for userid={}", userId, e);
+            return ResponseEntity.internalServerError().build();
         }
-
-        log.info("Successfully retrieved {} debit cards for userid={}", debitCards.size(), userId);
-        return ResponseEntity.ok(debitCards);
     }
 }
 

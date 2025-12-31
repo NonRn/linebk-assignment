@@ -47,7 +47,7 @@ const SetMainAccount = (props) => {
 
         try {
             const res = await setupMainAccountApi(user.userId, selectedId);
-            if (res && res.status === 200) {
+            if (res && (res.status === 200 || res.status === 204)) {
                 navigate('/bank');
             } else {
                 throw new Error('Failed to set main account');

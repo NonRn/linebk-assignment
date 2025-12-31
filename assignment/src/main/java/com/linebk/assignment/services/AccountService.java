@@ -9,10 +9,10 @@ public interface AccountService {
 
     List<AccountDto> getAccountByUserId(String userId);
 
-    void withdrawAmount(String accountId, BigDecimal amount);
+    int withdrawAmount(String accountId, BigDecimal amount);
 
-    void setupMainAccount(String userId, String accountId);
+    int setupMainAccount(String userId, String accountId);
 
-    void updateAccountDetail(String accountId, String nickname, String color);
+    int updateAccountDetail(String accountId, String nickname, String color);
 }
 

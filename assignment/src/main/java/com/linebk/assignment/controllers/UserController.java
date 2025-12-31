@@ -44,17 +44,29 @@ public class UserController {
                 schema = @Schema(implementation = UserDto.class))
         ),
         @ApiResponse(responseCode = "204", description = "User not found"),
-        @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+        @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
     })
 	public ResponseEntity<UserDto> getUserById(
         @Parameter(description = "Unique identifier of the user", example = "user-1234")
         @RequestParam("userid") String userId) {
-        log.info("Received request to get user with id={}", userId);
-		UserDto user = userService.getUserById(userId);
-        if(user == null) {
-            return ResponseEntity.noContent().build();
+
+        if(StringUtils.isBlank(userId)) {
+            log.warn("Invalid userId parameter");
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(user);
+
+        try {
+            log.info("Received request to get user with id={}", userId);
+            UserDto user = userService.getUserById(userId);
+            if (user == null) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            log.error("Error retrieving user with id={}", userId, e);
+            return ResponseEntity.internalServerError().build();
+        }
 	}
 
     @PostMapping("/auth/passcode")
@@ -65,21 +77,37 @@ public class UserController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Authentication successful"),
         @ApiResponse(responseCode = "401", description = "Authentication failed"),
-        @ApiResponse(responseCode = "400", description = "Invalid request body")
+        @ApiResponse(responseCode = "400", description = "Invalid request body"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<String> authenticatePasscodeUser(@Valid @RequestBody AuthRequest authRequest) {
         String userId = authRequest.getUserid();
         String passcode = authRequest.getPasscode();
         log.info("Authenticating user with id={}", userId);
-        
-        UserDto user = userService.getUserById(userId);
-        boolean authenticated = StringUtils.equals(passcode, passcode); // Dummy authentication logic = true
-        if (user != null && authenticated) { //TODO implement real authentication
-            log.info("User {} authenticated successfully", userId);
-            return ResponseEntity.ok("Authentication successful");
-        } else {
-            log.warn("Authentication failed for user {}", userId);
-            return ResponseEntity.status(401).body("Authentication failed");
+
+        if(StringUtils.isBlank(userId)) {
+            log.warn("Invalid userId parameter");
+            return ResponseEntity.badRequest().body("Invalid userId parameter");
+        }
+
+        if(StringUtils.isBlank(passcode) || passcode.length() != 6) {
+            log.warn("Invalid passcode format for user {}", userId);
+            return ResponseEntity.badRequest().body("Invalid passcode format");
+        }
+
+        try {
+            UserDto user = userService.getUserById(userId);
+            boolean authenticated = StringUtils.equals(passcode, passcode); // Dummy authentication logic = true
+            if (user != null && authenticated) { //TODO implement real authentication
+                log.info("User {} authenticated successfully", userId);
+                return ResponseEntity.ok("Authentication successful");
+            } else {
+                log.warn("Authentication failed for user {}", userId);
+                return ResponseEntity.status(401).body("Authentication failed");
+            }
+        } catch (Exception e) {
+            log.error("Error during authentication for user {}", userId, e);
+            return ResponseEntity.internalServerError().body("Internal server error");
         }
     }
 
@@ -91,21 +119,32 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Authentication successful"),
             @ApiResponse(responseCode = "401", description = "Authentication failed"),
-            @ApiResponse(responseCode = "400", description = "Invalid request body")
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<String> authenticateLoginUser(@Valid @RequestBody AuthRequest authRequest) {
         String userId = authRequest.getUserid();
         String passcode = authRequest.getPasscode();
         log.info("Authenticating user with id={}", userId);
 
-        UserDto user = userService.getUserById(userId);
-        boolean authenticated = StringUtils.equals(passcode, passcode); // Dummy authentication logic = true
-        if (user != null && authenticated) { //TODO implement real authentication
-            log.info("User {} authenticated successfully", userId);
-            return ResponseEntity.ok("Authentication successful");
-        } else {
-            log.warn("Authentication failed for user {}", userId);
-            return ResponseEntity.status(401).body("Authentication failed");
+        if(StringUtils.isBlank(userId) || StringUtils.isBlank(passcode)) {
+            log.warn("Invalid parameter for user {}", userId);
+            return ResponseEntity.badRequest().body("Invalid parameter");
+        }
+
+        try {
+            UserDto user = userService.getUserById(userId);
+            boolean authenticated = StringUtils.equals(passcode, passcode); // Dummy authentication logic = true
+            if (user != null && authenticated) { //TODO implement real authentication
+                log.info("User {} authenticated successfully", userId);
+                return ResponseEntity.ok("Authentication successful");
+            } else {
+                log.warn("Authentication failed for user {}", userId);
+                return ResponseEntity.status(401).body("Authentication failed");
+            }
+        } catch (Exception e) {
+            log.error("Error during authentication for user {}", userId, e);
+            return ResponseEntity.internalServerError().body("Internal server error");
         }
     }
 

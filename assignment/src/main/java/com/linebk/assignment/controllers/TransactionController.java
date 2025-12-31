@@ -47,7 +47,8 @@ public class TransactionController {
                 schema = @Schema(implementation = TransactionDto.class))
         ),
         @ApiResponse(responseCode = "204", description = "No transactions found"),
-        @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+        @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<List<TransactionDto>> getTransactionByUserIdWithPagination(
         @Parameter(description = "Unique identifier of the user", example = "user-1234", required = true)
@@ -73,16 +74,21 @@ public class TransactionController {
             limit = DEFAULT_LIMIT;
         }
 
-        log.info("Retrieving transactions for userid={}, limit={}, offset={}", userId, limit, offset);
-        List<TransactionDto> transactions = transactionService.getTransactionByUserIdWithPagination(userId, limit, offset);
+        try {
+            log.info("Retrieving transactions for userid={}, limit={}, offset={}", userId, limit, offset);
+            List<TransactionDto> transactions = transactionService.getTransactionByUserIdWithPagination(userId, limit, offset);
 
-        if (transactions == null || transactions.isEmpty()) {
-            log.debug("No transactions found for userid={}", userId);
-            return ResponseEntity.noContent().build();
+            if (transactions == null || transactions.isEmpty()) {
+                log.debug("No transactions found for userid={}", userId);
+                return ResponseEntity.noContent().build();
+            }
+
+            log.info("Successfully retrieved {} transactions for userid={}", transactions.size(), userId);
+            return ResponseEntity.ok(transactions);
+        } catch (Exception e) {
+            log.error("Error retrieving transactions for userid={}", userId, e);
+            return ResponseEntity.internalServerError().build();
         }
-
-        log.info("Successfully retrieved {} transactions for userid={}", transactions.size(), userId);
-        return ResponseEntity.ok(transactions);
     }
 }
 

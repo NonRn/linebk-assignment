@@ -47,7 +47,8 @@ public class AccountController {
                 schema = @Schema(implementation = AccountDto.class))
         ),
         @ApiResponse(responseCode = "204", description = "No accounts found"),
-        @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+        @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<List<AccountDto>> getAccountByUserId(
         @Parameter(description = "Unique identifier of the user", example = "user-1234")
@@ -59,16 +60,21 @@ public class AccountController {
             return ResponseEntity.badRequest().build();
         }
 
-        log.info("Retrieving accounts for userid={}", userId);
-        List<AccountDto> accounts = accountService.getAccountByUserId(userId);
+        try {
+            log.info("Retrieving accounts for userid={}", userId);
+            List<AccountDto> accounts = accountService.getAccountByUserId(userId);
 
-        if (accounts == null || accounts.isEmpty()) {
-            log.debug("No accounts found for userid={}", userId);
-            return ResponseEntity.noContent().build();
+            if (accounts == null || accounts.isEmpty()) {
+                log.debug("No accounts found for userid={}", userId);
+                return ResponseEntity.noContent().build();
+            }
+
+            log.info("Successfully retrieved {} accounts for userid={}", accounts.size(), userId);
+            return ResponseEntity.ok(accounts);
+        } catch (Exception e) {
+            log.error("Error retrieving accounts for userid={}: {}", userId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
-
-        log.info("Successfully retrieved {} accounts for userid={}", accounts.size(), userId);
-        return ResponseEntity.ok(accounts);
     }
 
     @PostMapping("/withdraw")
@@ -78,6 +84,7 @@ public class AccountController {
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Withdrawal successful"),
+        @ApiResponse(responseCode = "204", description = "No balance updated"),
         @ApiResponse(responseCode = "400", description = "Invalid request parameters or insufficient balance"),
         @ApiResponse(responseCode = "500", description = "Account not found or internal server error")
     })
@@ -96,7 +103,11 @@ public class AccountController {
         }
 
         try {
-            accountService.withdrawAmount(request.getAccountId(), request.getAmount());
+            int updated = accountService.withdrawAmount(request.getAccountId(), request.getAmount());
+            if(updated == 0) {
+                log.warn("No balance updated for accountId={}", request.getAccountId());
+                return ResponseEntity.noContent().build();
+            }
             log.info("Withdrawal successful for accountId={}", request.getAccountId());
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
@@ -112,6 +123,7 @@ public class AccountController {
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Main account setup successful"),
+        @ApiResponse(responseCode = "204", description = "No account updated"),
         @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
         @ApiResponse(responseCode = "500", description = "Account not found or internal server error")
     })
@@ -130,7 +142,11 @@ public class AccountController {
         }
 
         try {
-            accountService.setupMainAccount(request.getUserId(), request.getAccountId());
+            int updated = accountService.setupMainAccount(request.getUserId(), request.getAccountId());
+            if (updated == 0) {
+                log.warn("No account updated for userId={}, accountId={}", request.getUserId(), request.getAccountId());
+                return ResponseEntity.noContent().build();
+            }
             log.info("Main account setup successful for userId={}, accountId={}", request.getUserId(), request.getAccountId());
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
@@ -146,6 +162,7 @@ public class AccountController {
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Account detail updated successfully"),
+        @ApiResponse(responseCode = "204", description = "No account detail updated"),
         @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
         @ApiResponse(responseCode = "500", description = "Account not found or internal server error")
     })
@@ -159,7 +176,11 @@ public class AccountController {
         }
 
         try {
-            accountService.updateAccountDetail(request.getAccountId(), request.getNickname(), request.getColor());
+            int updated = accountService.updateAccountDetail(request.getAccountId(), request.getNickname(), request.getColor());
+            if (updated == 0) {
+                log.warn("No account detail updated for accountId={}", request.getAccountId());
+                return ResponseEntity.noContent().build();
+            }
             log.info("Account detail updated successfully for accountId={}", request.getAccountId());
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
@@ -167,8 +188,4 @@ public class AccountController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
-
-
 }
-

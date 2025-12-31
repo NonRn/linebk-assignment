@@ -42,7 +42,8 @@ public class BannerController {
                 schema = @Schema(implementation = BannerDto.class))
         ),
         @ApiResponse(responseCode = "204", description = "No banners found"),
-        @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+        @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<List<BannerDto>> getBannerByUserId(
         @Parameter(description = "Unique identifier of the user", example = "user-1234")
@@ -54,16 +55,21 @@ public class BannerController {
             return ResponseEntity.badRequest().build();
         }
 
-        log.info("Retrieving banners for userid={}", userId);
-        List<BannerDto> banners = bannerService.getBannerByUserId(userId);
+        try {
+            log.info("Retrieving banners for userid={}", userId);
+            List<BannerDto> banners = bannerService.getBannerByUserId(userId);
 
-        if (banners == null || banners.isEmpty()) {
-            log.debug("No banners found for userid={}", userId);
-            return ResponseEntity.noContent().build();
+            if (banners == null || banners.isEmpty()) {
+                log.debug("No banners found for userid={}", userId);
+                return ResponseEntity.noContent().build();
+            }
+
+            log.info("Successfully retrieved {} banners for userid={}", banners.size(), userId);
+            return ResponseEntity.ok(banners);
+        } catch (Exception e) {
+            log.error("Error retrieving banners for userid={}", userId, e);
+            return ResponseEntity.internalServerError().build();
         }
-
-        log.info("Successfully retrieved {} banners for userid={}", banners.size(), userId);
-        return ResponseEntity.ok(banners);
     }
 }
 

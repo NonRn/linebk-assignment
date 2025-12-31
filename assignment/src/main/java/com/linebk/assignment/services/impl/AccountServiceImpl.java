@@ -41,20 +41,20 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void withdrawAmount(String accountId, BigDecimal amount) {
+    public int withdrawAmount(String accountId, BigDecimal amount) {
         log.info("AccountServiceImpl.withdrawAmount accountId={}, amount={}", accountId, amount);
 
         // Check if account exists
         if (!accountRepository.isAccountExists(accountId)) {
             log.error("Account not found: accountId={}", accountId);
-            throw new RuntimeException("Account not found: " + accountId);
+            throw new IllegalArgumentException("Account not found: " + accountId);
         }
 
         // Get current balance
         BigDecimal currentBalance = accountRepository.getAccountBalance(accountId);
         if (currentBalance == null) {
             log.error("Failed to retrieve balance for accountId={}", accountId);
-            throw new RuntimeException("Failed to retrieve account balance");
+            throw new IllegalArgumentException("Failed to retrieve account balance");
         }
 
         log.debug("Current balance for accountId={}: {}", accountId, currentBalance);
@@ -62,41 +62,46 @@ public class AccountServiceImpl implements AccountService {
         // Check if balance is sufficient
         if (currentBalance.compareTo(amount) < 0) {
             log.error("Insufficient balance for accountId={}, current={}, requested={}", accountId, currentBalance, amount);
-            throw new RuntimeException("Insufficient balance. Current: " + currentBalance + ", Requested: " + amount);
+            throw new IllegalArgumentException("Insufficient balance. Current: " + currentBalance + ", Requested: " + amount);
         }
 
         // Update balance
         BigDecimal newBalance = currentBalance.subtract(amount);
-        accountRepository.updateAccountBalance(accountId, newBalance);
-
+        int updated = accountRepository.updateAccountBalance(accountId, newBalance);
         log.info("Withdraw successful for accountId={}, oldBalance={}, newBalance={}", accountId, currentBalance, newBalance);
+
+        return updated;
     }
 
     @Override
-    public void setupMainAccount(String userId, String accountId) {
+    public int setupMainAccount(String userId, String accountId) {
         log.info("AccountServiceImpl.setupMainAccount userId={}, accountId={}", userId, accountId);
 
         // Check if account exists
         if (!accountRepository.isAccountExists(accountId)) {
             log.error("Account not found: accountId={}", accountId);
-            throw new RuntimeException("Account not found: " + accountId);
+            throw new IllegalArgumentException("Account not found: " + accountId);
         }
 
-        accountRepository.setupMainAccount(userId, accountId);
+        int updated = accountRepository.setupMainAccount(userId, accountId);
         log.info("Main account setup successfully for userId={}, accountId={}", userId, accountId);
+
+        return updated;
     }
 
     @Override
-    public void updateAccountDetail(String accountId, String nickname, String color) {
+    public int updateAccountDetail(String accountId, String nickname, String color) {
         log.info("AccountServiceImpl.updateAccountDetail accountId={}, nickname={}, color={}", accountId, nickname, color);
 
         // Check if account exists
         if (!accountRepository.isAccountExists(accountId)) {
             log.error("Account not found: accountId={}", accountId);
-            throw new RuntimeException("Account not found: " + accountId);
+            throw new IllegalArgumentException("Account not found: " + accountId);
         }
 
-        accountRepository.updateAccountDetail(accountId, nickname, color);
+        int updated = accountRepository.updateAccountDetail(accountId, nickname, color);
         log.info("Account detail updated successfully for accountId={}", accountId);
+
+        return updated;
     }
 }
