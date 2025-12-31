@@ -5,6 +5,7 @@ import com.linebk.assignment.models.dto.AuthRequest;
 import com.linebk.assignment.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -148,4 +151,30 @@ public class UserController {
         }
     }
 
+/* API สำหรับดึง user_id เพื่อนำไป load test
+    @GetMapping("/all")
+    @Operation(
+            summary = "Get All user_id (for testing)",
+            description = "Returns List of User ID"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User profile retrieved",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = String.class)))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<List<String>> getUserIdAll() {
+        try {
+            log.info("Received request to get all user IDs");
+            List<String> userIds = userService.getAllUserIds();
+            return ResponseEntity.ok(userIds);
+        } catch (Exception e) {
+            log.error("Error retrieving all user IDs", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+*/
 }

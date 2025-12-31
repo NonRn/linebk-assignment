@@ -14,6 +14,7 @@ import com.linebk.assignment.services.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,14 @@ public class UserServiceImpl implements UserService {
             String greetingText = getGreetingText(userId);
             return mapToDto(user.get(), greetingText);
         }
+    }
+
+    @Override
+    public List<String> getAllUserIds() {
+        log.debug("getAllUserIds called");
+        List<String> userIdList = userJpaRepository.getAllUserIdsLimitNative();
+        log.info("Total userIds retrieved: {}", userIdList.size());
+        return userIdList;
     }
 
     private String getGreetingText(String userId) {

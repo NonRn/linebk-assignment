@@ -118,5 +118,20 @@ class UserServiceTest {
         assertNull(result);
     }
 
+    /* ==================== Test getAllUserIds ==================== */
+    @Test
+    void testGetAllUserIds_Success() {
+        // Arrange
+        when(userJpaRepository.getAllUserIdsLimitNative()).thenReturn(
+                java.util.Arrays.asList(testUserId, testUserId2)
+        );
+
+        // Act
+        java.util.List<String> result = userService.getAllUserIds();
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+    }
+
 }
 

@@ -7,6 +7,7 @@ import com.linebk.assignment.models.dto.WithdrawRequest;
 import com.linebk.assignment.services.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +45,7 @@ public class AccountController {
             responseCode = "200",
             description = "Accounts retrieved successfully",
             content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = AccountDto.class))
+                    array = @ArraySchema(schema = @Schema(implementation = AccountDto.class)))
         ),
         @ApiResponse(responseCode = "204", description = "No accounts found"),
         @ApiResponse(responseCode = "400", description = "Invalid request parameters"),

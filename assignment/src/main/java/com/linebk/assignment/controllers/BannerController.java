@@ -4,6 +4,7 @@ import com.linebk.assignment.models.dto.BannerDto;
 import com.linebk.assignment.services.BannerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,7 +40,7 @@ public class BannerController {
             responseCode = "200",
             description = "Banners retrieved successfully",
             content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = BannerDto.class))
+                array = @ArraySchema(schema = @Schema(implementation = BannerDto.class)))
         ),
         @ApiResponse(responseCode = "204", description = "No banners found"),
         @ApiResponse(responseCode = "400", description = "Invalid request parameters"),

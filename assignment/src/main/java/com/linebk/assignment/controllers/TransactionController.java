@@ -4,6 +4,7 @@ import com.linebk.assignment.models.dto.TransactionDto;
 import com.linebk.assignment.services.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +45,7 @@ public class TransactionController {
             responseCode = "200",
             description = "Transactions retrieved successfully",
             content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = TransactionDto.class))
+                array = @ArraySchema(schema = @Schema(implementation = TransactionDto.class)))
         ),
         @ApiResponse(responseCode = "204", description = "No transactions found"),
         @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
