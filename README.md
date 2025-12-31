@@ -22,15 +22,13 @@
 - ติดตั้ง [Docker Desktop](https://www.docker.com/products/docker-desktop/) หรือ Docker Engine
 
 **ขั้นตอนการติดตั้ง:**
-1. Clone Project และ เข้าไปที่ Project Folder
+1. Clone Project และ เข้าไปที่ Project Folder 
+- หากต้องการ initial mock data ลง database อัตโนมัติ ให้วางไฟล์ SQL (Postgresql) ที่ folder initial-db [Mock Data](https://drive.google.com/drive/folders/1A_qSu3rIPKb7LVuZMg0QMf2_Tt4duxP3?usp=sharing)
 2. รันคำสั่งสร้างและเริ่มระบบ:
    ```bash
    docker-compose up --build
    ```
 3. รอ Docker ทำงาน และ เข้าใช้งานผ่าน Browser ที่: [http://localhost](http://localhost)
-
-**Remark**
-- หากต้องการ initial mock data ลง database อัตโนมัติ ให้วางไฟล์ SQL (Postgresql) ที่ folder initial-db [Mock Data](https://drive.google.com/drive/folders/1A_qSu3rIPKb7LVuZMg0QMf2_Tt4duxP3?usp=sharing)
 
 ---
 
@@ -83,6 +81,11 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
    npm start
    ```
 4. ระบบจะเปิด Browser อัตโนมัติที่พอร์ต `3000`
+
+## 🧪 Testing & Demo Data
+- การเข้าสู่ระบบ ยังไม่มีการตรวจสอบ pin หรือ รหัสผ่านจริง สามารถใส่รหัสผ่านอะไรก็ได้
+- การเข้าหน้าใส่ pin สามารถเข้าโดยใส่ query param userid เช่น: `http://localhost/?userid=000018b0e1a211ef95a30242ac180002`
+- หากไม่ใส่ query param ระบบจะส่งไปยังหน้า login ให้ใส่ userid แทนการกรอก pin
 
 ## 📂 Project Structure
 
@@ -169,3 +172,31 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO assignment;
   - Query params: userid (string, required)
 
 ---
+
+## 📊 Performance Analysis
+
+* **Tool:** Grafana k6
+
+* **Target Endpoint 1: (Login with passcode)** 
+  * `POST /api/v1/user/auth/passcode`
+  * **Virtual Users (VUs):** 100 concurrent users
+  * **Total Duration:** 1 minute
+  
+* **Target Endpoint 2: (Get Account By UserId)** 
+  * `GET /api/v1/account?userid={userid}`
+  * **Virtual Users (VUs):** 10 VUs (10s) → 50 VUs (30s) → 100 VUs (1m), concluded by a 30-second ramp-down period
+  * **Total Duration:** 2 minute 10 seconds
+
+### Results Summary 📝
+* **Total Requests:** 3,9988 requests
+* **Success Rate:** 100.00%
+* **Avg Response Time:** 2.43s
+* **P(90) Latency:** 8.18s
+* **Max Latency:** 27.92s
+
+### Observations 🔍
+**Stability:** The application handled up to 100 concurrent users without any errors.
+**Latency:** The P90 latency spiked to 8.18 seconds, exceeding the set threshold of 2 seconds.
+**Bottleneck:** The maximum latency is 27.92 seconds during the 100 VU, This indicates that the database is working heavily.
+
+![img.png](assignment/src/test/img.png)
